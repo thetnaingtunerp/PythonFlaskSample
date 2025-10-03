@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, render_template,request
+from flask import Flask, render_template,request, redirect
 import  sqlite3
 
 app = Flask(__name__)
@@ -31,8 +31,16 @@ def save_student():
     conn.close()
     print('Student saved successfully!')
 
-    return render_template("homepage.html")
+    return redirect('/studentlist')
 
+@app.route('/studentlist')
+def studentlist():
+    conn = sqlite3.connect('students.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM students")
+    rows = cur.fetchall()
+    conn.close()
+    return render_template("homepage.html", rows=rows)
 
 
 @app.route("/about")
