@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, render_template
+from flask import Flask, render_template,request
 import  sqlite3
 
 app = Flask(__name__)
@@ -21,12 +21,16 @@ def homepage():
 
 @app.route('/saved', methods=['POST'])
 def save_student():
-    sname = 'Mg Mg'
-    phone = '121212'
-    address = 'Yangon'
-    print(sname)
-    print(phone)
-    print(address)
+    sname = request.form['fname']
+    phone = request.form['phone']
+    address = request.form['address']
+    conn = sqlite3.connect('students.db')
+    cur =conn.cursor()
+    cur.execute("INSERT INTO students (name, phone, address) VALUES (?, ?, ?)", (sname, phone, address))
+    conn.commit()
+    conn.close()
+    print('Student saved successfully!')
+
     return render_template("homepage.html")
 
 
